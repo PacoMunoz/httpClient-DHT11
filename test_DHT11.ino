@@ -21,7 +21,8 @@ const int DHTPin = 2;
 DHT dht(DHTPin, DHTTYPE);
 
 // definir parametros de la wifi local
-
+const char* ssid = "";
+const char* password = "";
 
 String sensorPosition = "patio";
 
