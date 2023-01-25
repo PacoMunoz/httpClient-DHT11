@@ -12,7 +12,7 @@
 ESP8266WiFiMulti WiFiMulti;
 
 // definicion del tipo de sensor DHT
-#define DHTTYPE DHT11
+#define DHTTYPE DHT22
 
 // definir puerto de entrada del sensor de temperatura en la placa
 const int DHTPin = 2;
@@ -21,10 +21,9 @@ const int DHTPin = 2;
 DHT dht(DHTPin, DHTTYPE);
 
 // definir parametros de la wifi local
-const char* ssid = "";
-const char* password = "";
 
-String sensorPosition = "estudio";
+
+String sensorPosition = "patio";
 
 // ubuntu
 // String serverName = "http://192.168.1.35:8080/data";
@@ -57,8 +56,7 @@ void setup() {
 }
 
 void loop() {
-
-  delay(5000);
+ 
 
   if(WiFi.status()== WL_CONNECTED){
       HTTPClient http;
@@ -71,13 +69,15 @@ void loop() {
 
 
      Serial.println("UTC: " + UTC.dateTime()); 
+     Serial.println("Temperatura" + String(dht.readTemperature()));
+     Serial.println("Humedad" + String(dht.readHumidity()));
      
      // Definir el timezone para España
      Timezone Spain;
      Spain.setLocation("Europe/Madrid");
 
            Serial.println("Position: " + sensorPosition);
-            
+            Serial.println("Temp: " + String(dht.readTemperature()));
       // If you need an HTTP request with a content type: application/json, use the following:
       http.addHeader("Content-Type", "application/json");
       
@@ -87,7 +87,7 @@ void loop() {
                                       + "\",\"location\":\"" + sensorPosition +"\" }");
       
       
-      /*if (httpResponseCode>0) {
+      if (httpResponseCode>0) {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);
         String payload = http.getString();
@@ -96,12 +96,14 @@ void loop() {
       else {
         Serial.print("Error code: ");
         Serial.println(httpResponseCode);
-      }*/
+      }
       // Free resources
       http.end();
     }
     else {
       Serial.println("WiFi Disconnected");
     }
+
+    delay(15000);
   
 }
